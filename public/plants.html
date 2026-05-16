@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plant Library — GreenReward</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/plants.css">
+  <script>(function(){var t=localStorage.getItem('gr_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+</head>
+<body>
+<nav class="navbar light-page" id="navbar">
+  <a href="index.html" class="nav-brand"><span style="font-size:1.25rem">🌿</span><span class="brand-name">GreenReward</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="plants.html" class="nav-link active">Plants</a></li>
+    <li><a href="weather.html" class="nav-link">Weather</a></li>
+    <li><a href="donation.html" class="nav-link">Donate</a></li>
+    <li><a href="game.html" class="nav-link">Game</a></li>
+    <li><a href="dashboard.html" class="nav-link">My Garden</a></li>
+  </ul>
+  <div class="nav-controls">
+    <select class="lang-select" id="lang-selector" onchange="LangManager.set(this.value)"><option value="en">🇬🇧 EN</option><option value="hi">🇮🇳 हिं</option><option value="mr">🇮🇳 मरा</option></select>
+    <button class="theme-toggle" id="theme-toggle" onclick="ThemeManager.toggle()">🌙</button>
+    <div class="nav-auth" id="nav-auth"><a href="login.html" class="btn-secondary">Login</a><a href="signup.html" class="btn-primary">Join Free</a></div>
+    <div class="nav-user hidden" id="nav-user"><span class="user-chip" id="nav-user-name">User</span><button class="btn-ghost" onclick="logout()" style="font-size:0.82rem">Logout</button></div>
+  </div>
+  <button class="hamburger" onclick="toggleMobile()">☰</button>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-head">
+    <h1 style="font-family:'Cormorant Garamond',serif">Plant Library 🌿</h1>
+    <p>Browse plants for information. In <a href="dashboard.html" style="color:var(--g-500);font-weight:600">My Garden</a> you can add <strong>any plant you grow</strong> — not just these 30.</p>
+  </div>
+  <div class="plant-controls">
+    <div class="search-box">
+      <span style="color:var(--text-muted)">🔍</span>
+      <input type="text" id="plant-search" placeholder="Search plants..." oninput="filterPlants()">
+    </div>
+    <div class="filter-tabs">
+      <button class="ptab active" onclick="setCategory('all',this)">All</button>
+      <button class="ptab" onclick="setCategory('outdoor',this)">🌳 Outdoor</button>
+      <button class="ptab" onclick="setCategory('indoor',this)">🪴 Indoor</button>
+      <button class="ptab" onclick="setCategory('medicinal',this)">🌿 Medicinal</button>
+      <button class="ptab" onclick="setCategory('showcase',this)">🌸 Showcase</button>
+    </div>
+  </div>
+  <div id="plants-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:20px"></div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="plant-modal-overlay" id="plant-modal" onclick="closeModal(event)">
+  <div class="plant-modal-box">
+    <button class="modal-close-btn" onclick="closePlantModal()">✕</button>
+    <div class="modal-img-wrap">
+      <img id="m-img" src="" alt="" onerror="this.style.display='none';document.getElementById('m-emoji-fb').style.display='flex'">
+      <div id="m-emoji-fb" class="modal-emoji-fallback" style="display:none"></div>
+    </div>
+    <h2 class="modal-name" id="m-name"></h2>
+    <div class="modal-sci" id="m-sci"></div>
+    <div class="modal-info-row">
+      <div class="modal-chip"><div class="mc-l">Category</div><div class="mc-v" id="m-cat"></div></div>
+      <div class="modal-chip"><div class="mc-l">Sunlight</div><div class="mc-v" id="m-sun"></div></div>
+      <div class="modal-chip"><div class="mc-l">Water</div><div class="mc-v" id="m-water"></div></div>
+      <div class="modal-chip"><div class="mc-l">Difficulty</div><div class="mc-v" id="m-diff"></div></div>
+    </div>
+    <div class="modal-section"><div class="modal-section-title">About</div><p id="m-desc"></p></div>
+    <div class="modal-section"><div class="modal-section-title">Care Tips</div><p id="m-care"></p></div>
+    <div class="modal-section"><div class="modal-section-title">Benefits</div><p id="m-benefits"></p></div>
+    <div class="modal-actions">
+      <button class="submit-btn" onclick="addFromModal()">🪴 Add to My Garden</button>
+      <button class="btn-secondary" onclick="closePlantModal()" style="margin-top:8px;width:100%;justify-content:center">Close</button>
+    </div>
+  </div>
+</div>
+
+<button class="chat-fab" onclick="toggleChat()"><img src="plant-photos/chatbot-mascot.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="chat-fab-fallback" style="display:none">🌿</div></button>
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chat-head"><img src="plant-photos/chatbot-mascot.jpg" class="chat-head-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="chat-head-fallback" style="display:none">🌿</div><div><div class="chat-title">Vriksha Mitra</div><div class="chat-sub">Plant assistant</div></div><span class="chat-ai-badge">🌿 Smart</span><button class="chat-close" onclick="toggleChat()">✕</button></div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="chat-input-row"><input type="text" id="chat-in" placeholder="Ask about any plant..." onkeydown="if(event.key==='Enter')chatSend()"><button class="chat-send-btn" onclick="chatSend()">➤</button></div>
+</div>
+<div id="toast"></div>
+<script src="js/lang.js"></script><script src="js/data.js"></script><script src="js/auth.js"></script><script src="js/chatbot.js"></script><script src="js/plants.js"></script>
+</body>
+</html>

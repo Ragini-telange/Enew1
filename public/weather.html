@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather — GreenReward</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <script>(function(){var t=localStorage.getItem('gr_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <style>
+    .weather-wrap{max-width:1100px;margin:0 auto;padding:92px 32px 60px}
+    /* City search */
+    .city-search-box{background:var(--bg-card);border-radius:var(--radius);padding:28px 32px;margin-bottom:24px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+    .city-search-box h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--text-primary);margin-bottom:6px}
+    .city-search-box p{color:var(--text-muted);font-size:0.86rem;margin-bottom:18px}
+    .city-input-row{display:flex;gap:10px;flex-wrap:wrap}
+    .city-input-row .form-input{max-width:320px}
+    /* Weather hero */
+    .weather-hero{background:linear-gradient(135deg,#1a3a5c,#2d6a9f,#1e4976);border-radius:var(--radius);padding:40px;margin-bottom:24px;display:flex;align-items:center;gap:36px;position:relative;overflow:hidden}
+    .weather-hero::before{content:'';position:absolute;top:-50px;right:-50px;width:220px;height:220px;background:rgba(255,255,255,0.06);border-radius:50%}
+    .weather-main{flex:1}
+    .w-emoji{font-size:3.5rem;line-height:1;margin-bottom:6px}
+    .w-temp{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:700;color:#fff;line-height:1}
+    .w-city{color:rgba(255,255,255,0.82);font-size:1rem;margin-top:6px}
+    .w-desc{color:rgba(255,255,255,0.65);margin-top:3px;font-size:0.88rem;text-transform:capitalize}
+    .w-details{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0;min-width:190px}
+    .w-chip{background:rgba(255,255,255,0.13);border-radius:10px;padding:12px;text-align:center}
+    .w-chip-icon{font-size:1.3rem;margin-bottom:3px}
+    .w-chip-val{font-size:1rem;font-weight:700;color:#fff}
+    .w-chip-lbl{font-size:0.7rem;color:rgba(255,255,255,0.65);margin-top:2px}
+    .w-mock-badge{background:rgba(255,200,100,0.2);border:1px solid rgba(255,200,100,0.4);border-radius:100px;padding:4px 12px;font-size:0.72rem;color:#ffd166;margin-top:10px;display:inline-block}
+    /* Season tabs */
+    .season-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+    .season-card{background:var(--bg-card);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;border:2px solid var(--border);transition:all 0.2s;box-shadow:var(--shadow-xs)}
+    .season-card.active{border-color:var(--g-500);background:var(--bg-tertiary)}
+    .sc-emoji{font-size:1.7rem;margin-bottom:6px}
+    .sc-name{font-weight:700;color:var(--text-primary);font-size:0.88rem}
+    .sc-months{color:var(--text-muted);font-size:0.72rem;margin-top:2px}
+    .tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin-bottom:32px}
+    .plant-suggest{background:linear-gradient(135deg,var(--g-800),var(--g-700));border-radius:var(--radius);padding:24px 28px;color:#fff;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .plant-suggest h4{color:#fff;font-size:0.96rem;margin-bottom:4px}
+    .plant-suggest p{color:rgba(255,255,255,0.7);font-size:0.84rem}
+    .ps-plants{display:flex;gap:8px;flex-wrap:wrap}
+    .ps-chip{background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.22);border-radius:100px;padding:5px 13px;font-size:0.8rem;color:#fff;cursor:pointer}
+    .ps-chip:hover{background:rgba(255,255,255,0.22)}
+    .care-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+    @media(max-width:768px){.weather-hero{flex-direction:column;padding:24px}.season-row{grid-template-columns:1fr 1fr}.weather-wrap{padding:84px 18px 40px}}
+    @media(max-width:480px){.season-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<nav class="navbar light-page" id="navbar">
+  <a href="index.html" class="nav-brand"><span style="font-size:1.25rem">🌿</span><span class="brand-name">GreenReward</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="plants.html" class="nav-link">Plants</a></li>
+    <li><a href="weather.html" class="nav-link active">Weather</a></li>
+    <li><a href="donation.html" class="nav-link">Donate</a></li>
+    <li><a href="game.html" class="nav-link">Game</a></li>
+    <li><a href="dashboard.html" class="nav-link">My Garden</a></li>
+  </ul>
+  <div class="nav-controls">
+    <select class="lang-select" id="lang-selector" onchange="LangManager.set(this.value)"><option value="en">🇬🇧 EN</option><option value="hi">🇮🇳 हिं</option><option value="mr">🇮🇳 मरा</option></select>
+    <button class="theme-toggle" id="theme-toggle" onclick="ThemeManager.toggle()">🌙</button>
+    <div class="nav-auth" id="nav-auth"><a href="login.html" class="btn-secondary">Login</a><a href="signup.html" class="btn-primary">Join Free</a></div>
+    <div class="nav-user hidden" id="nav-user"><span class="user-chip" id="nav-user-name">User</span><button class="btn-ghost" onclick="logout()" style="font-size:0.82rem">Logout</button></div>
+  </div>
+  <button class="hamburger" onclick="toggleMobile()">☰</button>
+</nav>
+
+<div class="weather-wrap">
+  <!-- City Search -->
+  <div class="city-search-box">
+    <h2>🌤 Live Garden Weather</h2>
+    <p>Enter your city to get real-time weather and personalised plant care tips for today.</p>
+    <div class="city-input-row">
+      <input class="form-input" type="text" id="city-input" placeholder="e.g. Mumbai, Pune, Nagpur..." style="max-width:320px" onkeydown="if(event.key==='Enter')searchWeather()">
+      <button class="btn-primary" onclick="searchWeather()">🔍 Get Weather</button>
+    </div>
+    <div id="weather-error" style="color:#c05050;font-size:0.86rem;margin-top:10px;display:none"></div>
+  </div>
+
+  <!-- Weather Card -->
+  <div id="weather-hero-wrap">
+    <div class="weather-hero">
+      <div class="weather-main">
+        <div class="w-emoji" id="w-emoji">⛅</div>
+        <div class="w-temp" id="w-temp">31°C</div>
+        <div class="w-city" id="w-city">📍 Solapur, Maharashtra</div>
+        <div class="w-desc" id="w-desc">Partly cloudy</div>
+        <div class="w-mock-badge" id="w-mock-badge">📡 Demo data — enter a city above for live weather</div>
+      </div>
+      <div class="w-details">
+        <div class="w-chip"><div class="w-chip-icon">💧</div><div class="w-chip-val" id="w-humidity">42%</div><div class="w-chip-lbl">Humidity</div></div>
+        <div class="w-chip"><div class="w-chip-icon">💨</div><div class="w-chip-val" id="w-wind">14 km/h</div><div class="w-chip-lbl">Wind</div></div>
+        <div class="w-chip"><div class="w-chip-icon">🌡️</div><div class="w-chip-val" id="w-feels">34°C</div><div class="w-chip-lbl">Feels Like</div></div>
+        <div class="w-chip"><div class="w-chip-icon">🌧️</div><div class="w-chip-val" id="w-rain">10%</div><div class="w-chip-lbl">Rain Chance</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Season tips -->
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--text-primary);margin-bottom:16px">Planting by Season</h2>
+  <div class="season-row">
+    <div class="season-card" onclick="showSeason('winter',this)"><div class="sc-emoji">❄️</div><div class="sc-name">Winter</div><div class="sc-months">Dec – Feb</div></div>
+    <div class="season-card active" onclick="showSeason('summer',this)"><div class="sc-emoji">☀️</div><div class="sc-name">Summer</div><div class="sc-months">Mar – May</div></div>
+    <div class="season-card" onclick="showSeason('monsoon',this)"><div class="sc-emoji">🌧️</div><div class="sc-name">Monsoon</div><div class="sc-months">Jun – Sep</div></div>
+    <div class="season-card" onclick="showSeason('autumn',this)"><div class="sc-emoji">🍂</div><div class="sc-name">Autumn</div><div class="sc-months">Oct – Nov</div></div>
+  </div>
+  <div id="season-tips" class="tips-grid"></div>
+
+  <div class="plant-suggest">
+    <div><h4>🌱 Best Plants for This Season</h4><p>Plants that thrive in current conditions</p></div>
+    <div class="ps-plants" id="weather-plants"></div>
+  </div>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--text-primary);margin-bottom:16px">General Garden Care Tips</h2>
+  <div class="care-grid">
+    <div class="tip-card"><div class="tc-icon">💧</div><h4>Watering</h4><p>Water early morning or evening. Check soil 2cm deep — if moist, skip. Avoid waterlogging. Water at the base, not on leaves.</p></div>
+    <div class="tip-card"><div class="tc-icon">☀️</div><h4>Sunlight</h4><p>Most outdoor plants need 6-8 hours. Indoor plants prefer bright indirect light near windows. Rotate pots monthly.</p></div>
+    <div class="tip-card"><div class="tc-icon">🪱</div><h4>Soil Health</h4><p>Add organic compost every 3-4 months. Mix cocopeat + garden soil + compost (1:1:1) for pots. Well-draining soil prevents root rot.</p></div>
+    <div class="tip-card"><div class="tc-icon">✂️</div><h4>Pruning</h4><p>Prune to remove dead branches. Pinch tips for bushy growth. Sterilize tools before cutting to prevent disease spread.</p></div>
+    <div class="tip-card"><div class="tc-icon">🐛</div><h4>Pest Control</h4><p>Spray neem oil (5ml/L water) every 2 weeks. Check leaf undersides weekly. Isolate infected plants immediately.</p></div>
+    <div class="tip-card"><div class="tc-icon">🌱</div><h4>Fertilizing</h4><p>Use vermicompost or kitchen compost every 4-6 weeks in growing season. Banana peel water is great for potassium.</p></div>
+  </div>
+</div>
+
+<button class="chat-fab" onclick="toggleChat()">
+  <img src="plant-photos/chatbot-mascot.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="chat-fab-fallback" style="display:none">🌿</div>
+</button>
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chat-head">
+    <img src="plant-photos/chatbot-mascot.jpg" class="chat-head-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="chat-head-fallback" style="display:none">🌿</div>
+    <div><div class="chat-title">Vriksha Mitra</div><div class="chat-sub">Plant & weather assistant</div></div>
+    <span class="chat-ai-badge">🌿 Smart</span>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="chat-input-row"><input type="text" id="chat-in" placeholder="Ask about weather or plants..." onkeydown="if(event.key==='Enter')chatSend()"><button class="chat-send-btn" onclick="chatSend()">➤</button></div>
+</div>
+<div id="toast"></div>
+
+<script src="js/lang.js"></script><script src="js/data.js"></script><script src="js/auth.js"></script><script src="js/chatbot.js"></script>
+<script>
+const seasons = {
+  summer:[
+    {icon:'💧',title:'Water Frequently',text:'At 30°C+, outdoor plants may need watering twice daily. Water at base, early morning and evening to reduce evaporation.'},
+    {icon:'🕶️',title:'Shade Protection',text:'Use 30-50% shade cloth for sensitive plants. Aloe Vera, Neem, and Gulmohar still thrive in direct heat.'},
+    {icon:'🌿',title:'Best Summer Plants',text:'Neem, Gulmohar, Aloe Vera, Marigold, Sunflower thrive in Indian summer heat. Very low water needed.'},
+    {icon:'🪱',title:'Mulching Tip',text:'Apply 3-4cm organic mulch around plant base to retain soil moisture and reduce watering frequency significantly.'},
+  ],
+  monsoon:[
+    {icon:'🌱',title:'Best Planting Season',text:'Monsoon is ideal for planting most trees! Cooler temps and natural soil moisture make root establishment easy.'},
+    {icon:'🦠',title:'Fungal Watch',text:'Increase ventilation. Avoid overhead watering. Apply copper-based fungicide if you see mold or spots on leaves.'},
+    {icon:'💧',title:'Reduce Watering',text:'Let natural rainfall water outdoor plants. Check drainage — waterlogged roots cause rot very quickly.'},
+    {icon:'🌿',title:'Best Monsoon Plants',text:'Plant Neem, Banyan, Peepal, Tulsi, Ginger this season. They establish beautifully during rains.'},
+  ],
+  winter:[
+    {icon:'❄️',title:'Reduce Watering',text:'Most plants need 30-50% less water in winter. Allow soil to dry slightly between waterings to prevent rot.'},
+    {icon:'☀️',title:'Maximize Sunlight',text:'Move indoor plants to south-facing windows. Wipe leaves clean for better light absorption.'},
+    {icon:'🌸',title:'Flowering Season',text:'Perfect for roses, marigolds, and ornamentals. Plant flower beds now for spectacular spring blooms.'},
+    {icon:'🧥',title:'Protect from Cold',text:'Cover tender plants on very cold nights with cloth. Mulch heavily to insulate roots from temperature drops.'},
+  ],
+  autumn:[
+    {icon:'🌱',title:'Prep for Winter',text:'Harvest summer crops, start winter vegetable planting. Compost leaves to create rich garden mulch.'},
+    {icon:'🌳',title:'Tree Planting',text:'Good time to plant deciduous trees. Cooler temps help roots establish before winter dormancy begins.'},
+    {icon:'💧',title:'Taper Watering',text:'Reduce watering gradually as temperatures drop. Plants are slowing their growth rate naturally.'},
+    {icon:'🌺',title:'Plant Bulbs',text:'Plant spring flower bulbs now — marigold seeds, chrysanthemums, and seasonal vegetables.'},
+  ],
+};
+const weatherPlants = {
+  summer:['🌳 Neem','🌺 Gulmohar','🌵 Aloe Vera','🌻 Sunflower','🟠 Marigold'],
+  monsoon:['🍃 Peepal','🌲 Banyan','🌿 Tulsi','🫚 Ginger','🍀 Giloy'],
+  winter:['🌹 Rose','🌸 Orchid','🌼 Peace Lily','🌾 Ashwagandha'],
+  autumn:['🌾 Ashwagandha','🌱 Spider Plant','🌿 Monstera','🟠 Marigold'],
+};
+
+function showSeason(s, el) {
+  document.querySelectorAll('.season-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('season-tips').innerHTML = seasons[s].map(t=>
+    `<div class="tip-card"><div class="tc-icon">${t.icon}</div><h4>${t.title}</h4><p>${t.text}</p></div>`
+  ).join('');
+  document.getElementById('weather-plants').innerHTML = weatherPlants[s].map(p=>
+    `<div class="ps-chip" onclick="location.href='plants.html'">${p}</div>`
+  ).join('');
+}
+
+async function searchWeather() {
+  const city = document.getElementById('city-input').value.trim();
+  if (!city) { showWeatherError('Please enter a city name'); return; }
+  hideWeatherError();
+  const btn = document.querySelector('.city-input-row .btn-primary');
+  btn.textContent = '⏳ Loading...'; btn.disabled = true;
+  try {
+    const res = await fetch('/api/weather?city=' + encodeURIComponent(city));
+    const data = await res.json();
+    if (!res.ok || data.error) { showWeatherError(data.error || 'City not found'); return; }
+    updateWeatherUI(data);
+  } catch(e) {
+    showWeatherError('Could not connect to weather service. Is the server running?');
+  } finally {
+    btn.textContent = '🔍 Get Weather'; btn.disabled = false;
+  }
+}
+
+function updateWeatherUI(d) {
+  document.getElementById('w-emoji').textContent = d.icon || '🌡️';
+  document.getElementById('w-temp').textContent = d.temp + '°C';
+  document.getElementById('w-city').textContent = '📍 ' + d.city;
+  document.getElementById('w-desc').textContent = d.description;
+  document.getElementById('w-humidity').textContent = d.humidity + '%';
+  document.getElementById('w-wind').textContent = d.wind + ' km/h';
+  document.getElementById('w-feels').textContent = d.feels_like + '°C';
+  document.getElementById('w-rain').textContent = d.rain_chance + '%';
+  const badge = document.getElementById('w-mock-badge');
+  if (d.mock) {
+    badge.style.display = 'inline-block';
+    badge.textContent = '📡 Demo data — add WEATHER_API_KEY to .env for live data';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function showWeatherError(msg) {
+  const e = document.getElementById('weather-error');
+  e.textContent = '⚠️ ' + msg; e.style.display = 'block';
+}
+function hideWeatherError() {
+  document.getElementById('weather-error').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', ()=>showSeason('summer', document.querySelector('.season-card.active')));
+</script>
+</body>
+</html>

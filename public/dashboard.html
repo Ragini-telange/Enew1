@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" >
+<head>
+  <script>(function(){var t=localStorage.getItem("gr_theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Garden — GreenReward</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+<script src="js/lang.js"></script>
+<script src="js/auth.js"></script>
+<script>if(!isLoggedIn()){window.location.href='login.html'}</script>
+
+<div class="dashboard-layout">
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar">
+    <div class="dash-sidebar-brand">
+      <div class="brand-name">🌿 GreenReward</div>
+      <div class="brand-tag">My Garden Dashboard</div>
+    </div>
+    <div class="dash-user-panel">
+      <div class="dash-avatar" id="dash-avatar">?</div>
+      <div class="dash-user-name" id="dash-uname">Loading...</div>
+      <div class="dash-user-role" id="dash-role">Member</div>
+      <div class="dash-xp-mini">
+        <div class="dash-xp-label">XP — <span id="dash-xp">0</span></div>
+        <div class="dash-xp-bar"><div class="dash-xp-fill" id="dash-xp-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <nav class="dash-nav">
+      <div class="dash-nav-section">Dashboard</div>
+      <div class="dash-nav-item active" onclick="showSection('overview',this)"><span class="di">🏠</span> <span data-i18n="dash_overview">Overview</span></div>
+      <div class="dash-nav-item" onclick="showSection('myplants',this)"><span class="di">🪴</span> <span data-i18n="dash_myplants">My Plants</span></div>
+      <div class="dash-nav-item" onclick="showSection('quests',this)"><span class="di">⚡</span> <span data-i18n="dash_quests">Quests</span></div>
+      <div class="dash-nav-item" onclick="showSection('photos',this)"><span class="di">📸</span> <span data-i18n="dash_photos">Growth Photos</span></div>
+      <div class="dash-nav-item" onclick="showSection('rewards',this)"><span class="di">🏆</span> <span data-i18n="dash_rewards">Rewards</span></div>
+      <div class="dash-nav-section">App</div>
+      <div class="dash-nav-item" onclick="location.href='plants.html'"><span class="di">🌿</span> <span data-i18n="nav_plants">Plant Library</span></div>
+      <div class="dash-nav-item" onclick="location.href='weather.html'"><span class="di">🌤</span> <span data-i18n="nav_weather">Weather</span></div>
+      <div class="dash-nav-item" onclick="location.href='donation.html'"><span class="di">💚</span> <span data-i18n="nav_donate">Donate</span></div>
+      <div class="dash-nav-item" onclick="location.href='game.html'"><span class="di">🎮</span> <span data-i18n="nav_game">Game</span></div>
+    </nav>
+    <div class="dash-sidebar-foot">
+      <button class="logout-btn-side" onclick="logout()" data-i18n="dash_logout">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div class="dash-page-title" id="dash-page-title">Overview</div>
+      <div class="dash-topbar-right">
+        <select class="lang-select" id="lang-selector" onchange="LangManager.set(this.value)" style="background:var(--bg-tertiary);border-color:var(--border);color:var(--text-secondary)">
+          <option value="en">🇬🇧 EN</option><option value="hi">🇮🇳 हिं</option><option value="mr">🇮🇳 मरा</option>
+        </select>
+        <button class="theme-toggle" id="theme-toggle" onclick="ThemeManager.toggle()" style="background:var(--bg-tertiary);border-color:var(--border);color:var(--text-secondary)">🌙</button>
+        <span id="topbar-greeting" style="font-size:0.84rem;color:var(--text-muted)"></span>
+        <button class="btn-primary" onclick="openAddPlantModal()" style="padding:8px 18px;font-size:0.83rem" data-i18n="dash_add_plant">+ Add Plant</button>
+      </div>
+    </div>
+
+    <div class="dash-content">
+
+      <!-- OVERVIEW -->
+      <div class="dash-section active" id="section-overview">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon">🌱</div><div class="stat-val" id="s-trees">—</div><div class="stat-lbl" data-i18n="dash_trees">Trees Planted</div></div>
+          <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val" id="s-xp">—</div><div class="stat-lbl" data-i18n="dash_xp">Total XP</div></div>
+          <div class="stat-card"><div class="stat-icon">📸</div><div class="stat-val" id="s-photos">—</div><div class="stat-lbl" data-i18n="dash_photos_count">Photos Uploaded</div></div>
+          <div class="stat-card"><div class="stat-icon">💚</div><div class="stat-val" id="s-donated">—</div><div class="stat-lbl" data-i18n="dash_donated">Total Donated (₹)</div></div>
+        </div>
+
+        <div class="dash-grid-3">
+          <div>
+            <div class="card mb-16" style="margin-bottom:18px">
+              <h3 style="font-family:'Cormorant Garamond',serif;color:var(--text-primary);margin-bottom:16px;font-size:1.1rem">⚡ <span data-i18n="dash_quests">Current Quests</span></h3>
+              <div class="quest-list">
+                <div class="quest-item">
+                  <div class="quest-ico">💧</div>
+                  <div class="quest-info">
+                    <div class="quest-name">Water Your Plants (0/5)</div>
+                    <div class="quest-reward">+50 XP on completion</div>
+                    <div class="quest-bar"><div class="quest-fill" id="water-q-bar" style="width:0%"></div></div>
+                  </div>
+                </div>
+                <div class="quest-item">
+                  <div class="quest-ico">📸</div>
+                  <div class="quest-info">
+                    <div class="quest-name">Upload Growth Photo</div>
+                    <div class="quest-reward">+30 XP</div>
+                    <div class="quest-bar"><div class="quest-fill" style="width:0%"></div></div>
+                  </div>
+                  <button class="quest-action" onclick="showSection('photos',document.querySelectorAll('.dash-nav-item')[3])">Go →</button>
+                </div>
+                <div class="quest-item">
+                  <div class="quest-ico">🌱</div>
+                  <div class="quest-info">
+                    <div class="quest-name">Add a Plant to Garden</div>
+                    <div class="quest-reward">+100 XP</div>
+                    <div class="quest-bar"><div class="quest-fill" id="plant-q-bar" style="width:0%"></div></div>
+                  </div>
+                  <button class="quest-action" onclick="openAddPlantModal()">Add →</button>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <h3 style="font-family:'Cormorant Garamond',serif;color:var(--text-primary);margin-bottom:13px;font-size:1rem">SDG Goals Supporting</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:7px">
+                <span style="background:#1b5e32;color:#fff;border-radius:7px;padding:6px 11px;font-size:0.76rem;font-weight:700">13 · Climate Action</span>
+                <span style="background:#1e5c22;color:#fff;border-radius:7px;padding:6px 11px;font-size:0.76rem;font-weight:700">15 · Life on Land</span>
+                <span style="background:#6b4700;color:#fff;border-radius:7px;padding:6px 11px;font-size:0.76rem;font-weight:700">11 · Sustainable Cities</span>
+                <span style="background:#0d3350;color:#fff;border-radius:7px;padding:6px 11px;font-size:0.76rem;font-weight:700">17 · Partnerships</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <h3 style="font-family:'Cormorant Garamond',serif;color:var(--text-primary);margin-bottom:14px;font-size:1rem">Your Progress</h3>
+              <div style="text-align:center;font-size:2.8rem;margin-bottom:10px" id="level-emoji">🌱</div>
+              <div style="font-weight:700;color:var(--text-primary);text-align:center;font-size:1rem" id="level-label">Level — Seedling</div>
+              <div style="color:var(--text-muted);text-align:center;font-size:0.8rem;margin-top:4px" id="xp-label">0 / 100 XP to next level</div>
+              <div style="background:var(--bg-tertiary);border-radius:100px;height:6px;margin-top:12px;overflow:hidden">
+                <div id="xp-bar-overview" style="background:linear-gradient(90deg,var(--g-500),var(--g-400));height:100%;border-radius:100px;width:0%;transition:width 0.5s"></div>
+              </div>
+            </div>
+            <div class="card">
+              <h3 style="font-family:'Cormorant Garamond',serif;color:var(--text-primary);margin-bottom:13px;font-size:1rem">Quick Actions</h3>
+              <button class="submit-btn" style="margin-bottom:8px" onclick="location.href='plants.html'">🌿 Plant Library</button>
+              <button class="submit-btn" style="background:linear-gradient(135deg,var(--gold),#8a5010);margin-bottom:8px" onclick="showSection('photos',document.querySelectorAll('.dash-nav-item')[3])">📸 Upload Photo</button>
+              <button class="submit-btn" style="background:linear-gradient(135deg,#1a4a6a,#0d2e44)" onclick="location.href='donation.html'">💚 Donate to NGO</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY PLANTS -->
+      <div class="dash-section" id="section-myplants">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px">
+          <div>
+            <h2 style="font-family:'Cormorant Garamond',serif;color:var(--text-primary);font-size:1.5rem" data-i18n="dash_myplants">My Plants</h2>
+            <p style="color:var(--text-muted);font-size:0.85rem;margin-top:3px">You can add any plant you grow — not just the ones in the library.</p>
+          </div>
+          <button class="btn-primary" onclick="openAddPlantModal()" data-i18n="dash_add_plant">+ Add Plant</button>
+        </div>
+        <div class="my-plants-grid" id="my-plants-grid"><p style="color:var(--text-muted)">Loading...</p></div>
+      </div>
+
+      <!-- QUESTS -->
+      <div class="dash-section" id="section-quests">
+        <h2 style="font-family:'Cormorant Garamond',serif;color:var(--text-primary);font-size:1.5rem;margin-bottom:22px" data-i18n="dash_quests">Quests</h2>
+        <div class="quest-list">
+          <div class="quest-item"><div class="quest-ico">💧</div><div class="quest-info"><div class="quest-name">Water Your Plants 5 Times</div><div class="quest-reward">+50 XP · Daily Quest</div><div class="quest-bar"><div class="quest-fill" id="wq2" style="width:0%"></div></div></div></div>
+          <div class="quest-item"><div class="quest-ico">📸</div><div class="quest-info"><div class="quest-name">Upload a Plant Growth Photo</div><div class="quest-reward">+30 XP</div><div class="quest-bar"><div class="quest-fill" style="width:0%"></div></div></div><button class="quest-action" onclick="location.href='game.html'">Upload →</button></div>
+          <div class="quest-item"><div class="quest-ico">🌱</div><div class="quest-info"><div class="quest-name">Add 3 Plants to Your Garden</div><div class="quest-reward">+150 XP</div><div class="quest-bar"><div class="quest-fill" id="pq2" style="width:0%"></div></div></div></div>
+          <div class="quest-item"><div class="quest-ico">💚</div><div class="quest-info"><div class="quest-name">Make Your First Donation</div><div class="quest-reward">+50–70 XP</div><div class="quest-bar"><div class="quest-fill" style="width:0%"></div></div></div><button class="quest-action" onclick="location.href='donation.html'">Donate →</button></div>
+          <div class="quest-item"><div class="quest-ico">🏆</div><div class="quest-info"><div class="quest-name">Reach 500 XP</div><div class="quest-reward">Unlock Tree Guardian Badge</div><div class="quest-bar"><div class="quest-fill" id="xq2" style="width:0%"></div></div></div></div>
+        </div>
+      </div>
+
+      <!-- PHOTOS -->
+      <div class="dash-section" id="section-photos">
+        <h2 style="font-family:'Cormorant Garamond',serif;color:var(--text-primary);font-size:1.5rem;margin-bottom:22px" data-i18n="dash_photos">Growth Photos</h2>
+        <div class="upload-zone" onclick="document.getElementById('photo-input').click()">
+          <input type="file" id="photo-input" accept="image/*" onchange="uploadPhoto(event)" style="display:none">
+          <div style="font-size:2.5rem;margin-bottom:12px">📸</div>
+          <h4 data-i18n="dash_upload_photo">Upload Plant Growth Photo</h4>
+          <p style="margin-top:6px" data-i18n="dash_upload_sub">Each photo earns +30 XP</p>
+        </div>
+        <div class="photos-grid" id="photos-grid"><p style="color:var(--text-muted);font-size:0.85rem">No photos yet.</p></div>
+      </div>
+
+      <!-- REWARDS -->
+      <div class="dash-section" id="section-rewards">
+        <h2 style="font-family:'Cormorant Garamond',serif;color:var(--text-primary);font-size:1.5rem;margin-bottom:8px" data-i18n="dash_rewards">Rewards</h2>
+        <p style="color:var(--text-muted);margin-bottom:22px;font-size:0.88rem">Unlock rewards by earning XP. Real gifts at 1000 points!</p>
+        <div class="rewards-grid" id="dash-rewards-grid"></div>
+        <div class="card" style="margin-top:22px">
+          <h3 style="font-family:'Cormorant Garamond',serif;color:var(--text-primary);margin-bottom:14px;font-size:1rem" data-i18n="dash_leaderboard">Community Leaderboard</h3>
+          <div id="dash-lb-list"><p style="color:var(--text-muted);font-size:0.86rem">Loading...</p></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ADD PLANT MODAL — user can type ANY plant name -->
+<div class="modal-overlay" id="add-plant-modal" onclick="if(event.target.id==='add-plant-modal')closeAddPlantModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAddPlantModal()">✕</button>
+    <h3>Add a Plant 🌱</h3>
+    <p style="color:var(--text-muted);font-size:0.84rem;margin-bottom:18px">Add any plant you grow — type the name yourself or pick from the quick list below.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px" id="quick-add-plants"></div>
+
+    <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:6px">
+      <p style="color:var(--text-muted);font-size:0.8rem;margin-bottom:12px">Or add a custom plant:</p>
+      <div class="form-group">
+        <label class="form-label">Plant Name (any name you like)</label>
+        <input class="form-input" type="text" id="custom-plant-name" placeholder="e.g. My Tomato Plant, Curry Leaf, Cactus...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Emoji (optional)</label>
+        <input class="form-input" type="text" id="custom-plant-emoji" placeholder="🌿" maxlength="4">
+      </div>
+      <button class="submit-btn" onclick="addCustomPlant()">Add to My Garden</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<button class="chat-fab" onclick="toggleChat()" title="Vriksha Mitra" style="position:fixed;bottom:28px;right:28px;z-index:800">
+  <img src="plant-photos/chatbot-mascot.jpg" alt="Vriksha Mitra" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="chat-fab-fallback" style="display:none">🌿</div>
+</button>
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chat-head">
+    <img src="plant-photos/chatbot-mascot.jpg" class="chat-head-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="chat-head-fallback" style="display:none">🌿</div>
+    <div><div class="chat-title" data-i18n="chat_title">Vriksha Mitra</div><div class="chat-sub" data-i18n="chat_sub">Plant care assistant</div></div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="chat-input-row">
+    <input type="text" id="chat-in" placeholder="Ask about any plant..." onkeydown="if(event.key==='Enter')chatSend()">
+    <button class="chat-send-btn" onclick="chatSend()">➤</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+const user = getUser();
+let waterCount = 0;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!isLoggedIn()) { location.href = 'login.html'; return; }
+  setupUI(); await loadStats(); loadMyPlants(); loadPhotos(); renderDashRewards(0); loadLeaderboard(); renderQuickPlants();
+});
+
+function setupUI() {
+  const u = user;
+  document.getElementById('dash-avatar').textContent = u.name.charAt(0).toUpperCase();
+  document.getElementById('dash-uname').textContent = u.name;
+  document.getElementById('dash-role').textContent = u.role === 'org' ? '🏢 Organisation' : '🌱 Member';
+  document.getElementById('topbar-greeting').textContent = 'Hello, ' + u.name;
+}
+
+async function loadStats() {
+  try {
+    const s = await apiRequest('GET', '/stats', null, true);
+    const xp = s.xp || 0;
+    document.getElementById('s-trees').textContent = s.trees || 0;
+    document.getElementById('s-xp').textContent = xp;
+    document.getElementById('s-photos').textContent = s.photos || 0;
+    document.getElementById('s-donated').textContent = parseFloat(s.donated||0).toFixed(0);
+    document.getElementById('dash-xp').textContent = xp;
+
+    const levels = [
+      {min:0,max:100,label:'Seedling',emoji:'🌱'},
+      {min:100,max:300,label:'Sprout',emoji:'🌿'},
+      {min:300,max:600,label:'Sapling',emoji:'🌾'},
+      {min:600,max:1000,label:'Tree Keeper',emoji:'🌲'},
+      {min:1000,max:2000,label:'Guardian',emoji:'🌳'},
+      {min:2000,max:99999,label:'Earth Hero',emoji:'🌍'},
+    ];
+    const lv = levels.find(l => xp >= l.min && xp < l.max) || levels[levels.length-1];
+    const pct = Math.min(100, ((xp-lv.min)/(lv.max-lv.min))*100);
+    document.getElementById('level-emoji').textContent = lv.emoji;
+    document.getElementById('level-label').textContent = 'Level — ' + lv.label;
+    document.getElementById('xp-label').textContent = xp + ' / ' + lv.max + ' XP to next level';
+    document.getElementById('xp-bar-overview').style.width = pct + '%';
+    document.getElementById('dash-xp-bar').style.width = pct + '%';
+
+    document.getElementById('plant-q-bar').style.width = Math.min(100,((s.trees||0)/3)*100)+'%';
+    document.getElementById('xq2') && (document.getElementById('xq2').style.width = Math.min(100,(xp/500)*100)+'%');
+    document.getElementById('pq2') && (document.getElementById('pq2').style.width = Math.min(100,((s.trees||0)/3)*100)+'%');
+    renderDashRewards(xp);
+  } catch(e) { console.error(e); }
+}
+
+async function loadMyPlants() {
+  try {
+    const plants = await apiRequest('GET', '/my-plants', null, true);
+    const grid = document.getElementById('my-plants-grid');
+    const cards = plants.map(p => {
+      const imgSrc = 'plant-photos/' + (p.plant_name.toLowerCase().replace(/\s+/g,'-')) + '.jpg';
+      return `<div class="my-plant-card">
+        <div class="my-plant-img">
+          <img src="${imgSrc}" alt="${p.plant_name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="my-plant-img-emoji" style="display:none">${p.plant_emoji||'🌱'}</div>
+        </div>
+        <div class="my-plant-body">
+          <div class="my-plant-name">${p.plant_name}</div>
+          <div class="my-plant-since">Added ${new Date(p.added_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+          <button class="water-btn" onclick="waterPlant(${p.id},'${p.plant_name}')" data-i18n="dash_water">💧 Water</button>
+          <button class="remove-btn" onclick="removePlant(${p.id},this)" data-i18n="dash_remove">Remove</button>
+        </div>
+      </div>`;
+    }).join('');
+    grid.innerHTML = cards + `<div class="add-plant-tile" onclick="openAddPlantModal()"><div style="font-size:2rem">➕</div><div style="font-size:0.86rem">Add Plant</div></div>`;
+  } catch(e) { document.getElementById('my-plants-grid').innerHTML='<p style="color:var(--text-muted)">Could not load plants.</p>'; }
+}
+
+async function waterPlant(id, name) {
+  try {
+    await apiRequest('POST',`/water/${id}`,null,true);
+    waterCount++;
+    document.getElementById('water-q-bar') && (document.getElementById('water-q-bar').style.width = Math.min(100,(waterCount/5)*100)+'%');
+    document.getElementById('wq2') && (document.getElementById('wq2').style.width = Math.min(100,(waterCount/5)*100)+'%');
+    showToast(`Watered ${name}! +10 XP 💧`);
+    await loadStats();
+  } catch(e) { showToast(e.message,'error'); }
+}
+
+async function removePlant(id, btn) {
+  try {
+    await apiRequest('DELETE',`/my-plants/${id}`,null,true);
+    btn.closest('.my-plant-card').remove();
+    showToast('Plant removed'); await loadStats();
+  } catch(e) { showToast(e.message,'error'); }
+}
+
+async function loadPhotos() {
+  try {
+    const data = await apiRequest('GET','/my-photos',null,true);
+    const grid = document.getElementById('photos-grid');
+    if (!data.length) { grid.innerHTML='<p style="color:var(--text-muted);font-size:0.85rem">No photos yet. Upload your first growth photo!</p>'; return; }
+    grid.innerHTML = data.map(p=>`<div class="photo-item"><img src="${p.photo_path}" alt="${p.plant_name}" onerror="this.parentElement.innerHTML='🌱'"></div>`).join('');
+  } catch(e) {}
+}
+
+async function uploadPhoto(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const form = new FormData(); form.append('photo',file); form.append('plant_name','My Plant');
+  try {
+    await fetch('http://localhost:3000/api/upload-photo',{method:'POST',headers:{'Authorization':'Bearer '+getToken()},body:form});
+    showToast('Photo uploaded! +30 XP 📸'); await loadStats(); loadPhotos();
+  } catch(e) { showToast('Upload failed','error'); }
+}
+
+function renderDashRewards(xp) {
+  document.getElementById('dash-rewards-grid').innerHTML = REWARDS.map(r => {
+    const u = xp >= r.pts;
+    return `<div class="reward-card ${u?'unlocked':''}"><div class="ri ${u?'':'locked'}">${r.emoji}</div><div class="rn">${r.name}</div><div class="rp">${r.pts} pts</div><div class="rs ${u?'earn':'lck'}">${u?'✅ Unlocked':'🔒 Locked'}</div></div>`;
+  }).join('');
+}
+
+async function loadLeaderboard() {
+  try {
+    const data = await apiRequest('GET','/leaderboard');
+    const medals = ['🥇','🥈','🥉'];
+    const ranks = ['gold','silver','bronze'];
+    document.getElementById('dash-lb-list').innerHTML = data.length
+      ? data.map((u,i)=>`<div class="lb-row"><div class="lb-rank ${ranks[i]||''}">${medals[i]||i+1}</div><div style="font-size:1.2rem">🌿</div><div class="lb-uname">${u.name}${u.name===user?.name?'<span class="lb-you">(You)</span>':''}</div><div class="lb-pts">${u.xp} XP</div></div>`).join('')
+      : '<p style="color:var(--text-muted);font-size:0.85rem">No members yet. Be the first!</p>';
+  } catch(e){}
+}
+
+function showSection(id, el) {
+  document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.dash-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles={overview:'Overview',myplants:'My Plants',quests:'Quests',photos:'Growth Photos',rewards:'Rewards'};
+  document.getElementById('dash-page-title').textContent = titles[id]||id;
+}
+
+function renderQuickPlants() {
+  document.getElementById('quick-add-plants').innerHTML = PLANTS.map(p =>
+    `<button class="quick-plant-btn" onclick="quickAddPlant('${p.name}','${p.emoji}')">${p.emoji} ${p.name}</button>`
+  ).join('');
+}
+
+function openAddPlantModal() { document.getElementById('add-plant-modal').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeAddPlantModal() { document.getElementById('add-plant-modal').classList.remove('open'); document.body.style.overflow=''; }
+
+async function quickAddPlant(name, emoji) {
+  try {
+    await apiRequest('POST','/my-plants',{plant_name:name,plant_emoji:emoji},true);
+    showToast(`${name} added! +100 XP 🌱`); closeAddPlantModal(); loadMyPlants(); await loadStats();
+  } catch(e) { showToast(e.message,'error'); }
+}
+
+async function addCustomPlant() {
+  const name = document.getElementById('custom-plant-name').value.trim();
+  const emoji = document.getElementById('custom-plant-emoji').value.trim() || '🌱';
+  if (!name) { showToast('Enter a plant name','error'); return; }
+  await quickAddPlant(name, emoji);
+  document.getElementById('custom-plant-name').value='';
+  document.getElementById('custom-plant-emoji').value='';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" >
+<head>
+  <script>(function(){var t=localStorage.getItem("gr_theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — GreenReward</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-left">
+    <a href="index.html" class="auth-left-logo">🌿 GreenReward</a>
+    <h2>Welcome back, Green Champion!</h2>
+    <p>Login to track your plants, upload growth photos, earn XP, and climb the leaderboard.</p>
+    <div class="auth-features">
+      <div class="auth-feature"><div class="auth-feature-icon">🌱</div>Track your planted trees</div>
+      <div class="auth-feature"><div class="auth-feature-icon">🏆</div>Earn XP and rewards</div>
+      <div class="auth-feature"><div class="auth-feature-icon">📸</div>Upload growth photos</div>
+      <div class="auth-feature"><div class="auth-feature-icon">💚</div>Donate to verified NGOs</div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+        <div></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select class="lang-select" id="lang-selector" onchange="LangManager.set(this.value)" style="background:var(--bg-tertiary);border-color:var(--border);color:var(--text-secondary)">
+            <option value="en">🇬🇧 EN</option><option value="hi">🇮🇳 हिं</option><option value="mr">🇮🇳 मरा</option>
+          </select>
+          <button class="theme-toggle" id="theme-toggle" onclick="ThemeManager.toggle()" style="background:var(--bg-tertiary);border-color:var(--border);color:var(--text-secondary)">🌙</button>
+        </div>
+      </div>
+      <h3 data-i18n="login_title">Login to GreenReward</h3>
+      <p class="auth-sub"><span data-i18n="login_sub">Don't have an account?</span> <a href="signup.html" data-i18n="login_signup_link">Sign up free →</a></p>
+      <div class="error-msg" id="err-msg"></div>
+      <div class="success-msg" id="succ-msg"></div>
+      <div class="form-group"><label class="form-label" data-i18n="login_email">Email Address</label><input class="form-input" type="email" id="login-email" placeholder="you@email.com"></div>
+      <div class="form-group"><label class="form-label" data-i18n="login_password">Password</label><input class="form-input" type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="submit-btn" id="login-btn" onclick="doLogin()" data-i18n="login_btn">Login to Garden</button>
+      <div class="auth-divider" style="margin-top:20px"><span>or</span></div>
+      <p style="text-align:center;font-size:0.85rem;color:var(--text-muted)"><span data-i18n="login_browse">Just browsing?</span> <a href="plants.html" style="color:var(--g-600);font-weight:600">View plants →</a></p>
+    </div>
+  </div>
+</div>
+<script src="js/lang.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  if (isLoggedIn()) location.href='dashboard.html';
+
+  async function doLogin() {
+    const email=document.getElementById('login-email').value.trim();
+    const pass=document.getElementById('login-pass').value;
+
+    const err=document.getElementById('err-msg');
+    const succ=document.getElementById('succ-msg');
+    const btn=document.getElementById('login-btn');
+
+    err.classList.remove('show');
+    succ.classList.remove('show');
+
+    // Empty field validation
+    if(!email || !pass){
+      err.textContent='Please fill all fields';
+      err.classList.add('show');
+      return;
+    }
+
+    // Email validation
+    if(!email.includes('@')){
+      err.textContent='Enter a valid email address';
+      err.classList.add('show');
+      return;
+    }
+
+    // Password validation
+    if(pass.length < 6){
+      err.textContent='Password must be at least 6 characters';
+      err.classList.add('show');
+      return;
+    }
+
+    btn.textContent='Logging in...';
+    btn.disabled=true;
+
+    try {
+      const data=await apiRequest('POST','/login',{
+        email,
+        password:pass
+      });
+
+      setSession(data.token,data.user);
+
+      succ.textContent='Welcome back, '+data.user.name+'! Redirecting...';
+      succ.classList.add('show');
+
+      setTimeout(()=>location.href='dashboard.html',900);
+
+    } catch(e){
+      err.textContent=e.message;
+      err.classList.add('show');
+
+      btn.textContent='Login to Garden';
+      btn.disabled=false;
+    }
+  }
+</script>
+</body>
+</html>

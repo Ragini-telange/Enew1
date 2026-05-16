@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" >
+<head>
+  <script>(function(){var t=localStorage.getItem("gr_theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donate — GreenReward</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <style>
+    .donation-hero { background:linear-gradient(135deg,var(--g-deep),var(--g-mid)); border-radius:var(--radius); padding:48px; color:white; margin-bottom:40px; position:relative; overflow:hidden; }
+    .donation-hero::after { content:'💚'; position:absolute; right:48px; top:50%; transform:translateY(-50%); font-size:6rem; opacity:0.15; }
+    .donation-hero h2 { font-size:2.2rem; margin-bottom:10px; }
+    .donation-hero p { opacity:0.75; max-width:500px; line-height:1.6; }
+
+    .org-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; margin-bottom:32px; }
+    .org-card { background:white; border-radius:var(--radius); padding:24px; box-shadow:var(--shadow-sm); border:2px solid transparent; transition:all 0.25s; cursor:pointer; }
+    .org-card:hover { border-color:var(--g-pale); transform:translateY(-3px); }
+    .org-card.selected { border-color:var(--g-light); background:var(--g-cream); }
+    .org-logo { font-size:2.5rem; margin-bottom:10px; }
+    .org-name { font-weight:700; color:var(--g-deep); font-size:1rem; }
+    .org-verified { color:var(--g-light); font-size:0.75rem; font-weight:600; margin:5px 0; }
+    .org-desc { color:var(--t-mid); font-size:0.84rem; line-height:1.5; margin-top:6px; }
+    .org-count { display:inline-block; background:var(--g-cream); color:var(--g-mid); border-radius:6px; padding:3px 10px; font-size:0.75rem; font-weight:600; margin-top:8px; }
+
+    .donation-panel { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+    .donation-form-card { background:white; border-radius:var(--radius); padding:32px; box-shadow:var(--shadow-sm); }
+    .donation-form-card h3 { font-size:1.3rem; color:var(--g-deep); margin-bottom:20px; }
+
+    .amount-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+    .amt-btn { padding:11px 20px; border:2px solid var(--g-pale); border-radius:8px; background:white; cursor:pointer; font-weight:700; color:var(--g-deep); transition:all 0.2s; font-family:'DM Sans',sans-serif; font-size:0.9rem; }
+    .amt-btn.active, .amt-btn:hover { background:var(--g-mid); border-color:var(--g-mid); color:white; }
+
+    .selected-org-display { background:var(--g-cream); border:1px solid var(--g-pale); border-radius:10px; padding:12px 16px; margin-bottom:16px; color:var(--g-mid); font-size:0.88rem; font-weight:500; }
+
+    .donation-history { background:white; border-radius:var(--radius); padding:24px; box-shadow:var(--shadow-sm); }
+    .donation-history h3 { font-size:1.1rem; color:var(--g-deep); margin-bottom:16px; }
+    .history-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--g-cream); }
+    .history-item:last-child { border-bottom:none; }
+    .hi-org { font-weight:600; color:var(--g-deep); font-size:0.88rem; }
+    .hi-date { color:var(--t-light); font-size:0.78rem; }
+    .hi-amt { margin-left:auto; font-weight:700; color:var(--g-mid); }
+
+    .login-prompt-card { background:linear-gradient(135deg,#fff8e7,#fef3cd); border:2px solid var(--gold-l); border-radius:var(--radius); padding:32px; text-align:center; }
+    .login-prompt-card h3 { color:#7a4f00; margin-bottom:8px; }
+    .login-prompt-card p { color:#9a6800; font-size:0.88rem; margin-bottom:20px; }
+
+    @media(max-width:900px) { .donation-panel { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar light" id="navbar">
+    <div class="nav-brand"><span class="brand-icon">🌿</span><span class="brand-name" style="color:white">GreenReward</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link" style="color:white;">Home</a></li>
+      <li><a href="plants.html" class="nav-link" style="color:white;">Plants</a></li>
+      <li><a href="weather.html" class="nav-link"style="color:white;">Weather</a></li>
+      <li><a href="donation.html" class="nav-link active" style="color:white;">Donate</a></li>
+     <!-- <li><a href="game.html" class="nav-link" style="color:var(--t-mid)">Game</a></li>-->
+      <a href="game.html" class="nav-link" style="color:white;">Game</a>
+
+      <li><a href="dashboard.html" class="nav-link" style="color:white;">My Garden</a></li>
+    </ul>
+    <div class="nav-auth" id="nav-auth"><a href="login.html" class="btn-outline">Login</a><a href="signup.html" class="btn-filled">Join Free</a></div>
+    <div class="nav-user hidden" id="nav-user"><span class="user-chip" id="nav-user-name"></span><button class="btn-outline" onclick="logout()">Logout</button></div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobile()">☰</button>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="donation-hero">
+      <h2>Support Green Causes 💚</h2>
+      <p>Every donation goes directly to verified NGOs planting trees across India. Earn XP for every contribution you make!</p>
+    </div>
+
+    <!-- NGO Cards (public - everyone can see) -->
+    <div class="section-label">Verified Partners</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--g-deep);margin-bottom:24px">Choose an Organisation</h2>
+    <div class="org-grid" id="org-grid"></div>
+
+    <!-- Donation form (login required) OR history -->
+    <div id="donation-section"></div>
+  </div>
+
+  <button class="chat-fab" onclick="toggleChat()"><img src="plant-photos/chatbot-mascot.jpg" alt="Vriksha Mitra" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="chat-fab-fallback" style="display:none">🌿</div></button>
+  <div class="chatbot-panel" id="chatbot-panel">
+    <div class="chat-head"><span class="chat-avatar-ico">🌿</span><div><div class="chat-title">Vriksha Mitra</div><div class="chat-sub">Plant care assistant</div></div><button class="chat-close" onclick="toggleChat()">✕</button></div>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-input-row"><input type="text" id="chat-in" placeholder="Ask about any plant..." onkeydown="if(event.key==='Enter')chatSend()"><button class="chat-send-btn" onclick="chatSend()">➤</button></div>
+  </div>
+  <div id="toast"></div>
+
+  <script src="js/lang.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script>
+    let selectedOrg = null;
+    let selectedAmount = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderOrgs();
+      renderDonationSection();
+      if (isLoggedIn()) loadDonationHistory();
+    });
+
+    function renderOrgs() {
+      document.getElementById('org-grid').innerHTML = ORGS.map(o => `
+        <div class="org-card" onclick="selectOrg(${o.id}, this)">
+          <div class="org-logo">${o.logo}</div>
+          <div class="org-name">${o.name}</div>
+          <div class="org-verified">✅ Verified NGO • +${o.xpReward} XP per donation</div>
+          <div class="org-desc">${o.desc}</div>
+          <span class="org-count">🌳 ${o.count}</span>
+        </div>
+      `).join('');
+    }
+
+    function selectOrg(id, el) {
+      document.querySelectorAll('.org-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedOrg = ORGS.find(o => o.id === id);
+      document.getElementById('selected-org-disp').textContent = '🏢 Donating to: ' + selectedOrg.name + ' (+' + selectedOrg.xpReward + ' XP)';
+    }
+
+    function renderDonationSection() {
+      const sec = document.getElementById('donation-section');
+      if (isLoggedIn()) {
+        sec.innerHTML = `
+          <div class="donation-panel">
+            <div class="donation-form-card">
+              <h3>Make a Donation</h3>
+              <div class="selected-org-display" id="selected-org-disp">← Select an organisation above</div>
+              <div class="form-group"><label class="form-label">Select Amount</label>
+              <div class="amount-row">
+                <button class="amt-btn" onclick="pickAmt(100,this)">₹100</button>
+                <button class="amt-btn" onclick="pickAmt(500,this)">₹500</button>
+                <button class="amt-btn" onclick="pickAmt(1000,this)">₹1,000</button>
+                <button class="amt-btn" onclick="pickAmt(5000,this)">₹5,000</button>
+              </div></div>
+              <div class="form-group"><label class="form-label">Custom Amount</label>
+              <input class="form-input" type="number" id="custom-amt" placeholder="₹ Enter amount" min="10"></div>
+              <div class="form-group"><label class="form-label">Your Name</label>
+              <input class="form-input" type="text" id="donor-name" placeholder="Full name"></div>
+              <div class="form-group"><label class="form-label">Email (for receipt)</label>
+              <input class="form-input" type="email" id="donor-email" placeholder="email@example.com"></div>
+              <button class="submit-btn" onclick="makeDonation()">💚 Donate Now</button>
+            </div>
+            <div class="donation-history">
+              <h3>Your Donation History</h3>
+              <div id="history-list"><p style="color:var(--t-light);font-size:0.88rem">Loading...</p></div>
+            </div>
+          </div>`;
+      } else {
+        sec.innerHTML = `
+          <div class="login-prompt-card">
+            <h3>🔒 Login to Donate</h3>
+            <p>Create a free account or login to make donations and earn XP. Your impact is tracked and rewarded!</p>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+              <a href="login.html" class="btn-filled">Login</a>
+              <a href="signup.html" class="btn-outline">Create Account</a>
+            </div>
+          </div>`;
+      }
+    }
+
+    function pickAmt(amt, btn) {
+      document.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedAmount = amt;
+      document.getElementById('custom-amt').value = '';
+    }
+
+    async function makeDonation() {
+      if (!selectedOrg) { showToast('Please select an organisation', 'error'); return; }
+      const customAmt = document.getElementById('custom-amt').value;
+      const amount = customAmt || selectedAmount;
+      const name = document.getElementById('donor-name').value;
+      const email = document.getElementById('donor-email').value;
+      if (!amount || amount <= 0) { showToast('Enter donation amount', 'error'); return; }
+      if (!name || !email) { showToast('Enter your name and email', 'error'); return; }
+      try {
+        await apiRequest('POST', '/donate', { org_name: selectedOrg.name, amount: parseFloat(amount), donor_name: name, donor_email: email }, true);
+        showToast(`Donated ₹${amount} to ${selectedOrg.name}! +${selectedOrg.xpReward} XP 💚`);
+        loadDonationHistory();
+        document.getElementById('donor-name').value = '';
+        document.getElementById('donor-email').value = '';
+        document.getElementById('custom-amt').value = '';
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
+
+    async function loadDonationHistory() {
+      try {
+        const data = await apiRequest('GET', '/my-donations', null, true);
+        const list = document.getElementById('history-list');
+        if (!list) return;
+        if (!data.length) { list.innerHTML = '<p style="color:var(--t-light);font-size:0.88rem">No donations yet. Make your first donation! 💚</p>'; return; }
+        list.innerHTML = data.map(d => `
+          <div class="history-item">
+            <div>
+              <div class="hi-org">${d.org_name}</div>
+              <div class="hi-date">${new Date(d.donated_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+            </div>
+            <div class="hi-amt">₹${parseFloat(d.amount).toLocaleString()}</div>
+          </div>`).join('');
+      } catch(e) {}
+    }
+  </script>
+</body>
+</html>

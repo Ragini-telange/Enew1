@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenReward — Plant a Tree, Get Rewarded</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <!-- Prevent theme flash -->
+  <script>
+    (function(){var t=localStorage.getItem('gr_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <style>
+    .preview-section{max-width:1200px;margin:0 auto;padding:72px 32px}
+    @media(max-width:900px){.preview-section{padding:52px 18px}}
+  </style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="nav-brand"><span style="font-size:1.25rem">🌿</span><span class="brand-name">GreenReward</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link active">Home</a></li>
+    <li><a href="plants.html" class="nav-link">Plants</a></li>
+    <li><a href="weather.html" class="nav-link">Weather</a></li>
+    <li><a href="donation.html" class="nav-link">Donate</a></li>
+    <li><a href="game.html" class="nav-link">Game</a></li>
+    <li><a href="dashboard.html" class="nav-link">My Garden</a></li>
+  </ul>
+  <div class="nav-controls">
+    <select class="lang-select" id="lang-selector" onchange="LangManager.set(this.value)">
+      <option value="en">🇬🇧 EN</option><option value="hi">🇮🇳 हिं</option><option value="mr">🇮🇳 मरा</option>
+    </select>
+    <button class="theme-toggle" id="theme-toggle" onclick="ThemeManager.toggle()" title="Toggle theme">🌙</button>
+    <div class="nav-auth" id="nav-auth">
+      <a href="login.html" class="btn-secondary">Login</a>
+      <a href="signup.html" class="btn-primary">Join Free</a>
+    </div>
+    <div class="nav-user hidden" id="nav-user">
+      <span class="user-chip" id="nav-user-name">User</span>
+      <button class="btn-ghost" onclick="logout()" style="color:rgba(255,255,255,0.6);font-size:0.82rem">Logout</button>
+    </div>
+  </div>
+  <button class="hamburger" onclick="toggleMobile()">☰</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-photo"></div>
+  <div class="hero-bg-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🌍 Aligned with SDG Goals 13 · 15 · 11 · 17</div>
+    <h1 class="hero-title">Plant a Tree.<br><em>Watch it grow.</em><br>Get Rewarded.</h1>
+    <p class="hero-sub">Connect with trusted NGOs, track your plants, upload growth photos, and earn real rewards for every green action you take.</p>
+    <div class="hero-cta">
+      <a href="plants.html" class="btn-primary" style="padding:13px 30px;font-size:0.95rem">Explore Plants</a>
+      <a href="signup.html" style="display:inline-flex;align-items:center;padding:12px 26px;font-size:0.95rem;border-radius:100px;border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.85);font-weight:500">Join GreenReward →</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-img-frame">
+      <img src="plant-photos/hero-banner.jpg" alt="Plant growth" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="hero-img-fallback">🌳</div>
+      <div class="hero-img-caption">🌱 Every tree you plant is tracked and rewarded</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <div class="section-label">Simple Process</div>
+    <h2 class="section-title" style="font-family:'Cormorant Garamond',serif">How GreenReward Works</h2>
+    <div class="how-grid">
+      <div class="how-step"><div class="step-number">01</div><div class="step-emoji">🌱</div><h3>Plant a Tree</h3><p>Choose a plant, add it to your garden, and begin your green journey. Add any plant you grow — not just the ones in our library.</p></div>
+      <div class="how-divider">→</div>
+      <div class="how-step"><div class="step-number">02</div><div class="step-emoji">📸</div><h3>Track Growth</h3><p>Upload monthly photos of your plant. Document its growth and share progress with our growing community.</p></div>
+      <div class="how-divider">→</div>
+      <div class="how-step"><div class="step-number">03</div><div class="step-emoji">🏆</div><h3>Earn Rewards</h3><p>Collect XP for every green action, climb the leaderboard, and unlock real gifts at milestone levels.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SDG -->
+<section class="sdg-section">
+  <div class="sdg-inner">
+    <div class="section-label">Our Mission</div>
+    <h2 class="section-title" style="font-family:'Cormorant Garamond',serif">SDG Goals We Support</h2>
+    <div class="sdg-grid">
+      <div class="sdg-card sdg-13"><div class="sdg-num">13</div><h4>Climate Action</h4><p>Combat climate change through consistent tree plantation and community awareness</p></div>
+      <div class="sdg-card sdg-15"><div class="sdg-num">15</div><h4>Life on Land</h4><p>Protect, restore, and promote sustainable land use and forest conservation</p></div>
+      <div class="sdg-card sdg-11"><div class="sdg-num">11</div><h4>Sustainable Cities</h4><p>Create greener, more livable cities and communities across India</p></div>
+      <div class="sdg-card sdg-17"><div class="sdg-num">17</div><h4>Partnerships</h4><p>Collaborate with verified NGOs and change-makers for greater impact</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS — honest numbers -->
+<div class="stats-banner">
+  <div class="stat-item"><div class="stat-big">4</div><div class="stat-desc">Verified NGO Partners</div></div>
+  <div class="stat-item"><div class="stat-big">30+</div><div class="stat-desc">Plants in Library</div></div>
+  <div class="stat-item"><div class="stat-big">4</div><div class="stat-desc">SDG Goals Aligned</div></div>
+  <div class="stat-item"><div class="stat-big">🌱</div><div class="stat-desc">Growing Every Day</div></div>
+</div>
+
+<!-- PLANT PREVIEW -->
+<section class="preview-section">
+  <div class="section-label">Plant Library</div>
+  <h2 class="section-title" style="font-family:'Cormorant Garamond',serif">Explore Our Plants</h2>
+  <p style="color:var(--text-muted);font-size:0.9rem;margin-top:-26px;margin-bottom:28px">Browse for information. In My Garden you can add <strong>any</strong> plant you grow.</p>
+  <div class="preview-tabs">
+    <button class="ptab active" onclick="previewFilter('all',this)">All</button>
+    <button class="ptab" onclick="previewFilter('outdoor',this)">🌳 Outdoor</button>
+    <button class="ptab" onclick="previewFilter('indoor',this)">🪴 Indoor</button>
+    <button class="ptab" onclick="previewFilter('medicinal',this)">🌿 Medicinal</button>
+    <button class="ptab" onclick="previewFilter('showcase',this)">🌸 Showcase</button>
+  </div>
+  <div id="preview-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px"></div>
+  <div style="text-align:center;margin-top:32px"><a href="plants.html" class="btn-primary" style="padding:12px 32px">View All 30 Plants →</a></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">🌿 GreenReward</div>
+      <p>Plant a tree. Watch it grow. Get rewarded.</p>
+      <p style="font-size:0.77rem;margin-top:10px;opacity:0.38">Team: Disha Patil · Ragini Telange · Samiisha Atirkar · Shubhangi Kale</p>
+    </div>
+    <div class="footer-links">
+      <div class="fl-col">
+        <div class="fl-title">Navigate</div>
+        <a href="plants.html">Plants</a><a href="weather.html">Weather</a><a href="donation.html">Donate</a><a href="game.html">Game</a>
+      </div>
+      <div class="fl-col">
+        <div class="fl-title">Account</div>
+        <a href="login.html">Login</a><a href="signup.html">Join Free</a><a href="dashboard.html">My Garden</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 GreenReward · www.greenreward.com</div>
+</footer>
+
+<!-- CHATBOT -->
+<button class="chat-fab" onclick="toggleChat()">
+  <img src="plant-photos/chatbot-mascot.jpg" alt="Vriksha Mitra" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="chat-fab-fallback" style="display:none">🌿</div>
+</button>
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chat-head">
+    <img src="plant-photos/chatbot-mascot.jpg" class="chat-head-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="chat-head-fallback" style="display:none">🌿</div>
+    <div><div class="chat-title">Vriksha Mitra</div><div class="chat-sub">Plant & weather assistant</div></div>
+    <span class="chat-ai-badge">🌿 Smart</span>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="chat-input-row">
+    <input type="text" id="chat-in" placeholder="Ask about any plant or weather..." onkeydown="if(event.key==='Enter')chatSend()">
+    <button class="chat-send-btn" onclick="chatSend()">➤</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script src="js/lang.js"></script>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/chatbot.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

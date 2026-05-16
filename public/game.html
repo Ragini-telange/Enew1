@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" >
+<head>
+  <script>(function(){var t=localStorage.getItem("gr_theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game — GreenReward</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    .game-hero { background:linear-gradient(135deg,#7f7fbf,#464683,#0c2318); border-radius:var(--radius); padding:48px; color:white; margin-bottom:32px; display:flex;align-items:center;gap:40px; }
+    .game-hero h2 { font-size:2.2rem; margin-bottom:10px; }
+    .game-hero p { opacity:0.75; line-height:1.6; max-width:460px; }
+    .game-hero-visual { font-size:5rem; animation:float 3s ease-in-out infinite; flex-shrink:0; }
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+    .pts-card { background:linear-gradient(135deg,var(--gold),#e76f51); border-radius:var(--radius); padding:28px; color:white; text-align:center; }
+    .pts-big { font-size:3rem; font-weight:900; font-family:'Playfair Display',serif; }
+    .pts-lbl { opacity:0.85; font-size:0.88rem; margin-top:4px; }
+
+    .mini-stat { background:white; border-radius:var(--radius); padding:22px; text-align:center; box-shadow:var(--shadow-sm); }
+    .ms-val { font-size:1.8rem; font-weight:700; color:var(--g-mid); }
+    .ms-lbl { color:var(--t-mid); font-size:0.8rem; margin-top:3px; }
+
+    .upload-zone { background:white; border:2.5px dashed var(--g-pale); border-radius:var(--radius); padding:44px 32px; text-align:center; cursor:pointer; transition:all 0.25s; margin-bottom:24px; }
+    .upload-zone:hover { border-color:var(--g-light); background:var(--g-cream); }
+    .upload-zone .uz-icon { font-size:3.5rem; margin-bottom:14px; }
+    .upload-zone h4 { color:var(--g-deep); font-size:1.1rem; margin-bottom:6px; }
+    .upload-zone p { color:var(--t-mid); font-size:0.88rem; }
+    .upload-zone input { display:none; }
+
+    .photos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; margin-top:16px; }
+    .photo-item { border-radius:10px; overflow:hidden; aspect-ratio:1; background:var(--g-cream); display:flex;align-items:center;justify-content:center;font-size:2.5rem; }
+    .photo-item img { width:100%;height:100%;object-fit:cover; }
+
+    .lb-row { display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--g-cream); }
+    .lb-row:last-child { border-bottom:none; }
+    .lb-rank { font-weight:900;font-size:1.05rem;color:var(--t-light);width:32px;text-align:center; }
+    .lb-rank.gold{color:#ffd700} .lb-rank.silver{color:#c0c0c0} .lb-rank.bronze{color:#cd7f32}
+    .lb-uname { flex:1;font-weight:500;color:var(--g-deep);font-size:0.9rem; }
+    .lb-pts { color:var(--g-mid);font-weight:700; }
+
+    .rewards-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-bottom:32px; }
+    .reward-card { background:white;border-radius:var(--radius);padding:20px;text-align:center;box-shadow:var(--shadow-sm);border:2px solid var(--g-pale); }
+    .reward-card.unlocked { border-color:var(--gold-l); }
+    .ri { font-size:2.2rem;margin-bottom:8px; }
+    .ri.locked { filter:grayscale(1) opacity(0.4); }
+    .rn { font-weight:700;color:var(--g-deep);font-size:0.88rem; }
+    .rp { color:var(--t-light);font-size:0.75rem;margin-top:3px; }
+    .rs { font-size:0.75rem;margin-top:8px;font-weight:600; }
+    .rs.earn { color:var(--gold); }
+    .rs.lck { color:var(--t-light); }
+
+    .page-grid-3 { display:grid;grid-template-columns:2fr 1fr;gap:24px; }
+    @media(max-width:900px){.game-hero{flex-direction:column;padding:32px 24px;} .page-grid-3{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <nav class="navbar light" id="navbar">
+    <div class="nav-brand"><span class="brand-icon">🌿</span><span class="brand-name" style="color:white;">GreenReward</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link" style="color:white;">Home</a></li>
+      <li><a href="plants.html" class="nav-link" style="color:white;">Plants</a></li>
+      <li><a href="weather.html" class="nav-link" style="color:white;">Weather</a></li>
+      <li><a href="donation.html" class="nav-link" style="color:white;">Donate</a></li>
+      <li><a href="game.html" class="nav-link active" style="color:white;">Game</a></li>
+      <li><a href="dashboard.html" class="nav-link" style="color:white;">My Garden</a></li>
+    </ul>
+    <div class="nav-auth" id="nav-auth"><a href="login.html" class="btn-outline">Login</a><a href="signup.html" class="btn-filled">Join Free</a></div>
+    <div class="nav-user hidden" id="nav-user"><span class="user-chip" id="nav-user-name"></span><button class="btn-outline" onclick="logout()">Logout</button></div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobile()">☰</button>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="game-hero">
+      <div>
+        <h2>GreenReward Game 🎮</h2>
+        <p>Upload plant growth photos, earn points, unlock rewards, and climb the leaderboard. Real gifts await at 1000+ points!</p>
+      </div>
+      <div class="game-hero-visual">🏆</div>
+    </div>
+
+    <!-- Public leaderboard -->
+    <div class="page-grid-3">
+      <div>
+        <div id="game-content"></div>
+      </div>
+      <div>
+        <div class="card">
+          <h3 style="font-family:'Playfair Display',serif;color:var(--g-deep);margin-bottom:16px">🏆 Community Leaderboard</h3>
+          <div id="lb-list"><p style="color:var(--t-light);font-size:0.88rem">Loading...</p></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Playfair Display',serif;color:var(--g-deep);margin:32px 0 16px">Rewards & Milestones</h3>
+    <div class="rewards-grid" id="rewards-grid"></div>
+  </div>
+
+  <button class="chat-fab" onclick="toggleChat()"><img src="plant-photos/chatbot-mascot.jpg" alt="Vriksha Mitra" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="chat-fab-fallback" style="display:none">🌿</div></button>
+  <div class="chatbot-panel" id="chatbot-panel">
+    <div class="chat-head"><span class="chat-avatar-ico">🌿</span><div><div class="chat-title">Vriksha Mitra</div><div class="chat-sub">Plant care assistant</div></div><button class="chat-close" onclick="toggleChat()">✕</button></div>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-input-row"><input type="text" id="chat-in" placeholder="Ask about any plant..." onkeydown="if(event.key==='Enter')chatSend()"><button class="chat-send-btn" onclick="chatSend()">➤</button></div>
+  </div>
+  <div id="toast"></div>
+
+  <script src="js/lang.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script>
+    let userXP = 0;
+    let photosCount = 0;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      loadLeaderboard();
+      renderRewards(0);
+      if (isLoggedIn()) {
+        renderGameContent(true);
+        await loadUserStats();
+      } else {
+        renderGameContent(false);
+      }
+    });
+
+    function renderGameContent(loggedIn) {
+      const cont = document.getElementById('game-content');
+      if (!loggedIn) {
+        cont.innerHTML = `
+          <div style="background:linear-gradient(135deg,#fff8e7,#fef3cd);border:2px solid var(--gold-l);border-radius:var(--radius);padding:32px;text-align:center;margin-bottom:24px">
+            <h3 style="color:#7a4f00;font-size:1.1rem;margin-bottom:8px">🔒 Login to Play</h3>
+            <p style="color:#9a6800;font-size:0.88rem;margin-bottom:20px">Login or sign up to upload photos, earn points, and win real rewards!</p>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+              <a href="login.html" class="btn-filled">Login</a>
+              <a href="signup.html" class="btn-outline">Create Account</a>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px">
+            <div class="mini-stat"><div class="ms-val">—</div><div class="ms-lbl">Your Points</div></div>
+            <div class="mini-stat"><div class="ms-val">—</div><div class="ms-lbl">Photos Uploaded</div></div>
+            <div class="mini-stat"><div class="ms-val">—</div><div class="ms-lbl">Day Streak</div></div>
+          </div>`;
+        return;
+      }
+      cont.innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px">
+          <div class="pts-card"><div class="pts-big" id="pts-display">—</div><div class="pts-lbl">🏆 Your Points</div></div>
+          <div class="mini-stat"><div class="ms-val" id="photos-display">—</div><div class="ms-lbl">Photos Uploaded</div></div>
+          <div class="mini-stat"><div class="ms-val" id="streak-display">—</div><div class="ms-lbl">Day Streak</div></div>
+        </div>
+        <div class="upload-zone" onclick="triggerUpload()">
+          <input type="file" id="photo-file" accept="image/*" onchange="handleUpload(event)">
+          <div class="uz-icon">📸</div>
+          <h4>Upload Plant Growth Photo</h4>
+          <p>+30 XP and +30 points per photo • Build your daily streak</p>
+          <button class="btn-filled" style="margin-top:16px" onclick="event.stopPropagation()">Choose Photo</button>
+        </div>
+        <h4 style="color:var(--g-deep);font-size:0.95rem;font-weight:700;margin-bottom:12px">Your Recent Photos</h4>
+        <div class="photos-grid" id="photos-grid"><p style="color:var(--t-light);font-size:0.85rem">Loading...</p></div>`;
+      loadPhotos();
+    }
+
+    async function loadUserStats() {
+      try {
+        const stats = await apiRequest('GET', '/stats', null, true);
+        userXP = stats.xp;
+        photosCount = stats.photos;
+        document.getElementById('pts-display').textContent = stats.xp;
+        document.getElementById('photos-display').textContent = stats.photos;
+        document.getElementById('streak-display').textContent = stats.streak;
+        renderRewards(stats.xp);
+      } catch(e) {}
+    }
+
+    async function loadPhotos() {
+      try {
+        const data = await apiRequest('GET', '/my-photos', null, true);
+        const grid = document.getElementById('photos-grid');
+        if (!grid) return;
+        if (!data.length) { grid.innerHTML = '<p style="color:var(--t-light);font-size:0.85rem">No photos yet. Upload your first plant photo!</p>'; return; }
+        grid.innerHTML = data.slice(0,12).map(p => `
+          <div class="photo-item">
+            <img src="${p.photo_path}" alt="${p.plant_name}" onerror="this.parentElement.innerHTML='🌱'">
+          </div>`).join('');
+      } catch(e) {}
+    }
+
+    async function loadLeaderboard() {
+      try {
+        const data = await apiRequest('GET', '/leaderboard');
+        const ranks = ['gold','silver','bronze'];
+        const medals = ['🥇','🥈','🥉'];
+        document.getElementById('lb-list').innerHTML = data.length
+          ? data.map((u,i) => `
+            <div class="lb-row">
+              <div class="lb-rank ${ranks[i]||''}">${medals[i]||i+1}</div>
+              <div style="font-size:1.1rem">🌿</div>
+              <div class="lb-uname">${u.name}</div>
+              <div class="lb-pts">${u.xp} pts</div>
+            </div>`).join('')
+          : '<p style="color:var(--t-light);font-size:0.85rem">Be the first on the leaderboard!</p>';
+      } catch(e) {}
+    }
+
+    function renderRewards(pts) {
+      document.getElementById('rewards-grid').innerHTML = REWARDS.map(r => {
+        const unlocked = pts >= r.pts;
+        return `<div class="reward-card ${unlocked?'unlocked':''}">
+          <div class="ri ${unlocked?'':'locked'}">${r.emoji}</div>
+          <div class="rn">${r.name}</div>
+          <div class="rp">${r.pts} pts needed</div>
+          <div class="rs ${unlocked?'earn':'lck'}">${unlocked?'✅ Unlocked!':'🔒 Locked'}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function triggerUpload() { document.getElementById('photo-file')?.click(); }
+
+    async function handleUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const form = new FormData();
+      form.append('photo', file);
+      form.append('plant_name', 'My Plant');
+      try {
+        const res = await fetch('http://localhost:3000/api/upload-photo', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + getToken() },
+          body: form
+        });
+        const data = await res.json();
+        showToast('Photo uploaded! +30 XP 📸');
+        loadUserStats();
+        loadPhotos();
+      } catch(e) {
+        showToast('Upload failed: ' + e.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

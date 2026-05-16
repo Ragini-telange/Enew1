@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" >
+<head>
+  <script>(function(){var t=localStorage.getItem("gr_theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — GreenReward</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-left">
+    <a href="index.html" class="auth-left-logo">🌿 GreenReward</a>
+    <h2>Join India's Green Movement!</h2>
+    <p>Plant trees, track their growth, connect with NGOs, and earn rewards for every green action.</p>
+    <div class="auth-features">
+      <div class="auth-feature"><div class="auth-feature-icon">🌱</div>Add any plant you grow</div>
+      <div class="auth-feature"><div class="auth-feature-icon">🏆</div>Real gifts at 1000 XP</div>
+      <div class="auth-feature"><div class="auth-feature-icon">🌍</div>Aligned with SDG 13 & 15</div>
+      <div class="auth-feature"><div class="auth-feature-icon">🤝</div>Connect with verified NGOs</div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form-box">
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:22px">
+        <select class="lang-select" id="lang-selector" onchange="LangManager.set(this.value)" style="background:var(--bg-tertiary);border-color:var(--border);color:var(--text-secondary)">
+          <option value="en">🇬🇧 EN</option><option value="hi">🇮🇳 हिं</option><option value="mr">🇮🇳 मरा</option>
+        </select>
+        <button class="theme-toggle" id="theme-toggle" onclick="ThemeManager.toggle()" style="background:var(--bg-tertiary);border-color:var(--border);color:var(--text-secondary)">🌙</button>
+      </div>
+      <h3 data-i18n="signup_title">Create Your Account</h3>
+      <p class="auth-sub"><span data-i18n="signup_sub">Already have one?</span> <a href="login.html" data-i18n="signup_login_link">Login →</a></p>
+      <div class="form-group">
+        <label class="form-label" data-i18n="signup_role_label">I am joining as</label>
+        <div class="role-selector">
+          <div class="role-btn active" onclick="selectRole('user',this)"><div class="role-icon">🌱</div><div class="role-label" data-i18n="signup_role_user">Individual</div><div class="role-desc" data-i18n="signup_role_user_desc">Plant & earn rewards</div></div>
+          <div class="role-btn" onclick="selectRole('org',this)"><div class="role-icon">🏢</div><div class="role-label" data-i18n="signup_role_org">Organisation</div><div class="role-desc" data-i18n="signup_role_org_desc">Donate to NGOs</div></div>
+        </div>
+      </div>
+      <div class="error-msg" id="err-msg"></div>
+      <div class="success-msg" id="succ-msg"></div>
+      <div class="form-group"><label class="form-label" id="name-label" data-i18n="signup_name">Your Full Name</label><input class="form-input" type="text" id="signup-name" placeholder="Ragini Telange"></div>
+      <div class="form-group"><label class="form-label" data-i18n="signup_email">Email Address</label><input class="form-input" type="email" id="signup-email" placeholder="you@email.com"></div>
+      <div class="form-group"><label class="form-label" data-i18n="signup_password">Password</label><input class="form-input" type="password" id="signup-pass" placeholder="Minimum 6 characters" onkeydown="if(event.key==='Enter')doSignup()"></div>
+      <button class="submit-btn" id="signup-btn" onclick="doSignup()" data-i18n="signup_btn">Join GreenReward</button>
+      <p style="text-align:center;font-size:0.78rem;color:var(--text-muted);margin-top:14px">Plants & Weather are public — <a href="plants.html" style="color:var(--g-600)">explore without login</a></p>
+    </div>
+  </div>
+</div>
+<script src="js/lang.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  if(isLoggedIn())location.href='dashboard.html';
+  let selectedRole='user';
+  function selectRole(role,el){
+    selectedRole=role;
+    document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('name-label').setAttribute('data-i18n', role==='org'?'':'signup_name');
+    document.getElementById('name-label').textContent=role==='org'?'Organisation Name':'Your Full Name';
+    document.getElementById('signup-name').placeholder=role==='org'?'Green Yatra Foundation':'Ragini Telange';
+  }
+  async function doSignup(){
+    const name=document.getElementById('signup-name').value.trim();
+    const email=document.getElementById('signup-email').value.trim();
+    const pass=document.getElementById('signup-pass').value;
+    const err=document.getElementById('err-msg');
+    const succ=document.getElementById('succ-msg');
+    const btn=document.getElementById('signup-btn');
+    err.classList.remove('show');succ.classList.remove('show');
+    if(!name||!email||!pass){err.textContent='All fields are required';err.classList.add('show');return}
+    if(pass.length<6){err.textContent='Password must be at least 6 characters';err.classList.add('show');return}
+    btn.textContent='Creating account...';btn.disabled=true;
+    try{
+      const data=await apiRequest('POST','/signup',{name,email,password:pass,role:selectedRole});
+      setSession(data.token,data.user);
+      succ.textContent='Account created! Welcome, '+name+'! 🌿';succ.classList.add('show');
+      setTimeout(()=>location.href='dashboard.html',1000);
+    }catch(e){err.textContent=e.message;err.classList.add('show');btn.textContent='Join GreenReward';btn.disabled=false}
+  }
+</script>
+</body>
+</html>
